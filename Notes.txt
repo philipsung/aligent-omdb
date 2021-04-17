@@ -1,0 +1,21 @@
+/* ***TODO***
+searchHeader
+queryAPI - send/receive query from API
+queryYear - change input to allow a range selection
+
+*/
+Search / Header
+  Text input
+  Year range
+  Type radio
+
+Results
+  List
+  Focused details 
+Watchlist ?
+
+
+CHANGES:
+Changed value from Any to empty
+
+API key: 19bc8d19

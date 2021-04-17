@@ -52,3 +52,15 @@ label {
 	background: gray;
 	width: 70%;
 }
+
+#form-parameters-left {
+	width: 40%;
+}
+
+#form-slider {
+	display: flex;
+}
+
+.rc-slider {
+	margin: 0 8px;
+}

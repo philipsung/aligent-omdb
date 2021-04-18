@@ -25,9 +25,10 @@ export default function SearchHeader() {
 				let res = await fetch(url)
 				let data = await res.json()
 
-				setMovies([0,1,2])
-				console.log(url)
-				console.log(data.Search)
+				//first page of results in data.Search
+				//need to loop through remaining pages
+				//number of pages = Math.ceil(data.Results / 10)
+				setMovies(movies => movies.concat(data.Search))
 				console.log(`${data.Search.length} results for ${i}. Total ${movies.length} results`)
 			} catch(err) {
 				console.error(err)

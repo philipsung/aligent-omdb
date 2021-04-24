@@ -2,9 +2,7 @@ html {
 	background: #282c38;
 }
 body {
-	width: 1150px;
-	min-height: 700px;
-  	margin: 0 auto;
+  	margin: 0;
   	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
@@ -21,8 +19,9 @@ code {
 	display: flex;
 	width: 100%;
 	font-size: 10px;
-	padding: 25px 0;
-	background: gray;
+	padding: 29px 0;
+	background: #666666;
+	color: white;
 }
 
 #form-text {
@@ -40,13 +39,14 @@ label {
 }
 
 #search-results {
+	background: #ffffff;
 	display: flex;
+	height: 606px;
+	border: 1px solid grey;
 }
 
 #search-results-list {
-	background: pink;
-	width: 30%;
-	display: block;
+	width: 39%;
 	overflow: scroll;
 
 	/*Hide scroll horizontal scrollbar*/
@@ -54,8 +54,7 @@ label {
 }
 
 #search-results-details {
-	background: gray;
-	width: 70%;
+	width: 61%;
 }
 
 #form-parameters-left {
@@ -69,4 +68,24 @@ label {
 
 .rc-slider {
 	margin: 0 8px;
+}
+
+.movieCard {
+	display: flex;
+	border-bottom: 1px grey solid;
+	padding: 10px;
+}
+
+.movieCard--poster {
+	border: 1px grey solid;
+	border-radius: 5px;
+	height: 60px;
+	width: 60px;
+	overflow: hidden;
+	margin: auto 32px;
+	object-fit: contain;
+}
+
+.movieCard--poster img {
+	width: 100%;
 }

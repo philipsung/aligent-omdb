@@ -1,5 +1,6 @@
 import React, {useState} from "react";
-import Slider, { Range } from 'rc-slider';
+import Details from './details.js'
+import { Range } from 'rc-slider';
 import 'rc-slider/assets/index.css';
 
 export default function SearchHeader() {
@@ -7,35 +8,62 @@ export default function SearchHeader() {
 	//search states
 	const [queryText, setQueryText] = useState('')
 	const [queryType, setQueryType] = useState('')
-	const [queryYear, setqueryYear] = useState([1970,2015])
+	const [queryYear, setqueryYear] = useState([1970,1975])
 	const [movies, setMovies] = useState([])
 	const currentYear = new Date().getFullYear()
+	const [focus, setFocus] = useState('')
+	// const [focus, setFocus] = useState({
+	// 	title: '',
+	// 	img: '',
+	// 	rating: '', //PG, M, etc.
+	// 	release: '',
+	// 	actors: '', //lead roles
+	// 	plot: '', //description
+	// 	director: '',
+	// 	production: '',
+	// 	runtime: '',
+	// 	genre: '',
+	// 	awards: '',
+	// 	boxoffice: '',
+	// 	ratings: '', //review ratings
+	// })
 
 	const queryAPI = async(e) => {
 		//prevent page reload on form submission
 		e.preventDefault();	
 
-		//Clear any previous results
+		//init variables
 		setMovies([])
-
-		//API only allows searching by individual years -> repeat for range
-		for (let i = queryYear[0]; i <= queryYear[1]; i++) {
-			const url = `http://www.omdbapi.com/?apikey=19bc8d19&s=${queryText}&y=${i}&type=${queryType}`
+		let searchResult = []
+		let page = 1
+		let pageLimitReached = false
+		let pageCount
+		
+		while (pageLimitReached === false) {
 			try {
+				//TODO change year to typed input
+				const url = `http://www.omdbapi.com/?apikey=19bc8d19&s=${queryText}&y=${queryYear[0]}&type=${queryType}&page=${page}`
 				let res = await fetch(url)
 				let data = await res.json()
 
-				//first page of results in data.Search
-				//need to loop through remaining pages
-				//number of pages = Math.ceil(data.Results / 10)
-				setMovies(movies => movies.concat(data.Search))
-				console.log(`${data.Search.length} results for ${i}. Total ${movies.length} results`)
-			} catch(err) {
-				console.error(err)
+				if (page === 1) {
+					var resultCount = data.totalResults
+					pageCount = Math.ceil(resultCount / 10)
+				}
+				searchResult = await searchResult.concat(data.Search)
+
+				page++
+				if (page > pageCount) pageLimitReached = true
+			} catch (err) {
+				continue
 			}
 		}
+		setMovies(searchResult)
 	}
 
+	// function cardClick (ID) {
+	// 	setFocus(ID)
+	// }
 	
 	return (
 		<>
@@ -66,7 +94,7 @@ export default function SearchHeader() {
 					<div id="form-parameters-right" onChange={ (e) => setQueryType(e.target.value)}>
 						<label className="label" htmlFor="queryType">TYPE</label>
 						<input type="radio" value="" name="queryType" defaultChecked />Any
-						<input type="radio" value="movies" name="queryType" />Movies
+						<input type="radio" value="movie" name="queryType" />Movies
 						<input type="radio" value="series" name="queryType" />Series
 						<input type="radio" value="episodes" name="queryType" />Episodes
 					</div>
@@ -75,12 +103,28 @@ export default function SearchHeader() {
 
 			<div id="search-results">
 				<div id="search-results-list">
-					console.log(movies)
+					<p>{movies.length} RESULTS</p>
+					{movies.map(movie => (
+						<div className="movieCard" 
+							key={movie.imdbID}
+							onClick={ () => setFocus(movie.imdbID)} >
+							<div className="movieCard--poster">
+								<img
+									src={movie.Poster}
+									alt={movie.Title + " poster"}
+								/>
+							</div>
+							<div className="movieCard--title">
+								<h3>{movie.Title}</h3>
+								<p>{movie.Year}</p>
+							</div>
+						</div>
+						))
+					}
 				</div>
 
 				<div id="search-results-details">
-				<h2>Movie Title</h2>
-				<p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."</p>
+					<Details imdbID = {focus}/>	
 				</div>
 			</div>
 		</>

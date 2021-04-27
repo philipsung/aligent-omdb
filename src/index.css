@@ -60,14 +60,7 @@ label {
 #form-parameters-left {
 	width: 40%;
 	margin-right: 20px;
-}
-
-#form-slider {
-	display: flex;
-}
-
-.rc-slider {
-	margin: 0 8px;
+	text-align: left;
 }
 
 .movieCard {
@@ -88,4 +81,19 @@ label {
 
 .movieCard--poster img {
 	width: 100%;
+}
+
+#form--submit {
+	visibility: hidden;
+}
+
+input:invalid {
+	border: 1px red solid;
+}
+
+#search-results--counter {
+	position: -webkit-sticky;
+	position: sticky;
+	top: 0;
+	background: white;
 }

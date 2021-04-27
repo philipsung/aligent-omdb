@@ -1,77 +1,83 @@
 import React, {useState} from "react";
-import Details from './details.js'
-import { Range } from 'rc-slider';
+import SearchResults from './searchResults.js'
 import 'rc-slider/assets/index.css';
 
 export default function SearchHeader() {
 
-	//search states
+	//Form states
 	const [queryText, setQueryText] = useState('')
 	const [queryType, setQueryType] = useState('')
-	const [queryYear, setqueryYear] = useState([1970,1975])
-	const [movies, setMovies] = useState([])
+	const [queryYear, setqueryYear] = useState('')
 	const currentYear = new Date().getFullYear()
-	const [focus, setFocus] = useState('')
-	// const [focus, setFocus] = useState({
-	// 	title: '',
-	// 	img: '',
-	// 	rating: '', //PG, M, etc.
-	// 	release: '',
-	// 	actors: '', //lead roles
-	// 	plot: '', //description
-	// 	director: '',
-	// 	production: '',
-	// 	runtime: '',
-	// 	genre: '',
-	// 	awards: '',
-	// 	boxoffice: '',
-	// 	ratings: '', //review ratings
-	// })
 
+	//Result states
+	const [movies, setMovies] = useState([])
+	const [nextPage, setNextPage] = useState(1)
+	const [pageLimit, setPageLimit] = useState(1)
+	const [resultCount, setResultCount] = useState(-1)
+
+	//Check the query and store first page of results if valid
+	//If not valid, update state for result details
 	const queryAPI = async(e) => {
 		//prevent page reload on form submission
 		e.preventDefault();	
 
 		//init variables
 		setMovies([])
-		let searchResult = []
-		let page = 1
-		let pageLimitReached = false
-		let pageCount
-		
-		while (pageLimitReached === false) {
-			try {
-				//TODO change year to typed input
-				const url = `http://www.omdbapi.com/?apikey=19bc8d19&s=${queryText}&y=${queryYear[0]}&type=${queryType}&page=${page}`
-				let res = await fetch(url)
-				let data = await res.json()
+		setNextPage(1)
+		setPageLimit(1)
 
-				if (page === 1) {
-					var resultCount = data.totalResults
-					pageCount = Math.ceil(resultCount / 10)
-				}
-				searchResult = await searchResult.concat(data.Search)
+		let data = {}
 
-				page++
-				if (page > pageCount) pageLimitReached = true
-			} catch (err) {
-				continue
-			}
+		try {
+			const url = `http://www.omdbapi.com/?apikey=19bc8d19&s=${queryText}&y=${queryYear}&type=${queryType}&page=1`
+			let res = await fetch(url)
+			data = await res.json()
+		} catch (err) {
+			console.error(err)
 		}
-		setMovies(searchResult)
+
+		//Check search has results
+		if (data.Response==="false") {
+			//TODO: Set flag for bad query
+			console.log("No results found. Try a different search")
+		}
+		//Process results and set pageLimit
+		else {
+			setResultCount(data.totalResults)
+			setPageLimit( Math.ceil(data.totalResults / 10))
+			setMovies(data.Search)
+			setNextPage(nextPage + 1)
+		}
 	}
 
-	// function cardClick (ID) {
-	// 	setFocus(ID)
-	// }
-	
+	//Retrieve next page of results if it exists
+	const getNextPage = async(e) => {
+		let data = {}
+
+		if (nextPage > pageLimit) {
+			console.log("Reached last page")
+			return
+		}
+
+		try {
+			const url = `http://www.omdbapi.com/?apikey=19bc8d19&s=${queryText}&y=${queryYear}&type=${queryType}&page=${nextPage}`
+			let res = await fetch(url)
+			data = await res.json()
+			setMovies(movies.concat(data.Search))
+		} catch (err) {
+			console.error(err)
+		}
+		setNextPage(nextPage + 1)
+	}
+
 	return (
 		<>
 			<form className="form" onSubmit={queryAPI}>
 				<div id="form-text">
-					<label className="label" htmlFor="queryText">Search for:</label>
+					<label className="label" htmlFor="year">Search for:</label>
 					<input className="input" type="text" 
-						name="queryText"
+						name="year"
 						placeholder="E.g. Parasite"
 						onChange={ (e) => setQueryText(e.target.value)}
 					/>
@@ -80,15 +86,10 @@ export default function SearchHeader() {
 				<div id="form-parameters">
 					<div id="form-parameters-left">
 						<label className="label" htmlFor="queryYear">YEAR</label>
-						<div id="form-slider">
-							<span id="minimumYear">{queryYear[0]}</span>
-							<Range id="slider" min={1880} max={currentYear}
-								defaultValue={[1970,2015]}
-								allowCross={false}
-								onChange={(newValues) => setqueryYear(newValues)}
-							/>
-							<span id="maximumYear">{queryYear[1]}</span>
-						</div>
+						<input type="number" name="queryYear"
+							min="1880" max={currentYear} maxLength="4"  
+							value={queryYear}
+							onChange={ (e) => setqueryYear(e.target.value)} />
 					</div>
 					
 					<div id="form-parameters-right" onChange={ (e) => setQueryType(e.target.value)}>
@@ -99,34 +100,10 @@ export default function SearchHeader() {
 						<input type="radio" value="episodes" name="queryType" />Episodes
 					</div>
 				</div>
+				<input type="submit" id="form--submit"/>
 			</form>
 
-			<div id="search-results">
-				<div id="search-results-list">
-					<p>{movies.length} RESULTS</p>
-					{movies.map(movie => (
-						<div className="movieCard" 
-							key={movie.imdbID}
-							onClick={ () => setFocus(movie.imdbID)} >
-							<div className="movieCard--poster">
-								<img
-									src={movie.Poster}
-									alt={movie.Title + " poster"}
-								/>
-							</div>
-							<div className="movieCard--title">
-								<h3>{movie.Title}</h3>
-								<p>{movie.Year}</p>
-							</div>
-						</div>
-						))
-					}
-				</div>
-
-				<div id="search-results-details">
-					<Details imdbID = {focus}/>	
-				</div>
-			</div>
+			<SearchResults resultCount={resultCount} movies={movies} getNextPage={getNextPage}/>
 		</>
 	)
 }

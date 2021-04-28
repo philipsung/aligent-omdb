@@ -97,3 +97,8 @@ input:invalid {
 	top: 0;
 	background: white;
 }
+
+#search-results--bottom {
+	display: block;
+	height: 1px;
+}

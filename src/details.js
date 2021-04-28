@@ -8,7 +8,6 @@ export default function Details(props) {
 	useEffect(() => {
 		async function fetchData ()  {
 			if (props.imdbID !== '') {
-				console.log("Found ID")
 				try {
 					const url = `http://www.omdbapi.com/?apikey=19bc8d19&i=${props.imdbID}`
 					let res = await fetch(url)

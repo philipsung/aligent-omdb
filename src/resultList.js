@@ -1,19 +1,29 @@
-import React, {useState} from "react";
-import Details from './details.js'
+import React, {useRef, useCallback} from "react";
 
 export default function SearchResults(props) {
 
-	const [focus, setFocus] = useState('')
+	//OBSERVER
+	const observer = useRef()
+	const bottomOfResults = useCallback(node => {
+		if (observer.current) observer.current.disconnect()
+		observer.current = new IntersectionObserver(entries => {
+			if (entries[0].isIntersecting && props.nextPage < props.pageLimit) {
+				props.getNextPage()
+			}
+		})
+		if (node) observer.current.observe(node)
+	}, [props.pageLimit, props.nextPage])
 
-	if (props.movies.length > 0) {
+	if (props.movies && props.movies.length > 0) {
 		return (
 			<div id="search-results-list">
 				<p id="search-results--counter">{props.movies.length} / {props.resultCount} RESULTS</p>
 
-				{props.movies.map(movie => (
+				{props.movies.map((movie, index) => (
 					<div className="movieCard" 
 						key={movie.imdbID}
-						onClick={ () => setFocus(movie.imdbID)} >
+						onClick={ () => {props.changeFocus(movie.imdbID)
+					}} >
 						<div className="movieCard--poster">
 							<img
 								src={movie.Poster}
@@ -27,14 +37,16 @@ export default function SearchResults(props) {
 					</div>
 					))
 				}
-				<button type="button" onClick={() => props.getNextPage()}>Load next</button>
+				<div id="search-results--bottom" ref={bottomOfResults}>
+
+				</div>
 			</div>
 		)
 	} 
 	else {
 		return (
 			<div id="search-results-list">
-	
+				
 			</div>
 		)
 	}

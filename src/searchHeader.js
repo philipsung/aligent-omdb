@@ -16,6 +16,14 @@ export default function SearchHeader() {
 	const [pageLimit, setPageLimit] = useState(1)
 	const [resultCount, setResultCount] = useState(-1)
 
+	function removeDuplicates (movies) {
+		const uniqueMovies = Array.from(new Set(movies.map(a => a.imdbID)))
+		 .map(imdbID => {
+		   return movies.find(a => a.imdbID === imdbID)
+		 })
+		 return uniqueMovies
+	}
+
 	//Check the query and store first page of results if valid
 	//If not valid, update state for result details
 	const queryAPI = async(e) => {
@@ -24,7 +32,6 @@ export default function SearchHeader() {
 
 		//init variables
 		setMovies([])
-		setNextPage(1)
 		setPageLimit(1)
 
 		let data = {}
@@ -38,25 +45,23 @@ export default function SearchHeader() {
 		}
 
 		//Check search has results
-		if (data.Response==="false") {
+		if (data.Response==="False") {
 			//TODO: Set flag for bad query
-			console.log("No results found. Try a different search")
+			return
 		}
 		//Process results and set pageLimit
 		else {
 			setResultCount(data.totalResults)
 			setPageLimit( Math.ceil(data.totalResults / 10))
-			setMovies(data.Search)
-			setNextPage(nextPage + 1)
+			setMovies(removeDuplicates(data.Search))
+			setNextPage(2)
 		}
 	}
 
 	//Retrieve next page of results if it exists
 	const getNextPage = async(e) => {
 		let data = {}
-
 		if (nextPage > pageLimit) {
-			console.log("Reached last page")
 			return
 		}
 
@@ -64,7 +69,7 @@ export default function SearchHeader() {
 			const url = `http://www.omdbapi.com/?apikey=19bc8d19&s=${queryText}&y=${queryYear}&type=${queryType}&page=${nextPage}`
 			let res = await fetch(url)
 			data = await res.json()
-			setMovies(movies.concat(data.Search))
+			setMovies(removeDuplicates(movies.concat(data.Search)))
 		} catch (err) {
 			console.error(err)
 		}
@@ -97,13 +102,13 @@ export default function SearchHeader() {
 						<input type="radio" value="" name="queryType" defaultChecked />Any
 						<input type="radio" value="movie" name="queryType" />Movies
 						<input type="radio" value="series" name="queryType" />Series
-						<input type="radio" value="episodes" name="queryType" />Episodes
+						<input type="radio" value="episode" name="queryType" />Episodes
 					</div>
 				</div>
 				<input type="submit" id="form--submit"/>
 			</form>
 
-			<SearchResults resultCount={resultCount} movies={movies} getNextPage={getNextPage}/>
+			<SearchResults pageLimit={pageLimit} nextPage={nextPage} resultCount={resultCount} movies={movies} getNextPage={getNextPage}/>
 		</>
 	)
 }

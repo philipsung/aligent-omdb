@@ -1,12 +1,13 @@
 import './App.css';
-import SearchHeader from './searchHeader.js'
+import HeaderForm from './HeaderForm.js'
 
 function App() {
   return (
     <div className="App">
       <header className="App-header">
       </header>
-        <SearchHeader/>
+        <HeaderForm />
+        
     </div>
   );
 }

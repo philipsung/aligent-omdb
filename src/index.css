@@ -1,11 +1,11 @@
 html {
 	background: #282c38;
+	padding: 0;
+	margin: 0;
 }
 body {
   	margin: 0;
-  	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  	    font-family: 'Roboto', sans-serif;
   	-webkit-font-smoothing: antialiased;
   	-moz-osx-font-smoothing: grayscale;
 }
@@ -48,6 +48,7 @@ label {
 #search-results-list {
 	width: 39%;
 	overflow: scroll;
+	text-align: left;
 
 	/*Hide scroll horizontal scrollbar*/
 	overflow-x: hidden;
@@ -65,18 +66,41 @@ label {
 
 .movieCard {
 	display: flex;
-	border-bottom: 1px grey solid;
-	padding: 10px;
+	border-bottom: 1px #bbbbbb solid;
+	height: 124px;
+}
+
+.activeCard {
+	background: #ebebeb;
 }
 
 .movieCard--poster {
-	border: 1px grey solid;
+	border: 1px #404040 solid;
 	border-radius: 5px;
 	height: 60px;
 	width: 60px;
 	overflow: hidden;
 	margin: auto 32px;
+	margin-left: 32px;
+	margin-right: 20px;
 	object-fit: contain;
+}
+
+.movieCard--details {
+	margin: auto 0;
+	color: #999999;
+	font-size: .9em;
+}
+
+.movieCard--details h3,p{
+	margin: 0;
+	padding: 0;
+}
+
+.movieCard--details h3 {
+	font-size: 16px;
+	font-weight: 400;
+	color: #666666
 }
 
 .movieCard--poster img {
@@ -95,10 +119,75 @@ input:invalid {
 	position: -webkit-sticky;
 	position: sticky;
 	top: 0;
+	padding-left: 25px;
+	height: 80px;
 	background: white;
+	font-size: .9em;
+	color: #404040;
+
+	/*Vertically align contents*/
+	display: flex;
+  	align-items: center;
 }
 
 #search-results--bottom {
 	display: block;
 	height: 1px;
+}
+
+#focused-movie-top {
+	display: flex;
+}
+
+#focused-movie--poster {
+	min-width: 240px;
+	min-height: 370px;
+	display: flex;
+	align-items: center;
+}
+
+#focused-movie--poster img {
+	height: 312px;
+	width: 200px;
+	margin: auto;
+	border-radius: 5px;
+}
+
+#focused-movie--details {
+	position: relative;
+	width: 100%;
+	height: 370px;
+	text-align: left;
+}
+
+#position {
+	position: absolute;
+	bottom: 0;
+}
+
+#focused-movie--ratings {
+	display: flex;
+	width: 100%;
+	justify-content: center;
+	margin: 20px auto;
+}
+
+.rating {
+	width: 25%;
+	padding: 10px 20px;
+	font-size: .8em;
+	color: #999999;
+}
+
+.rating:nth-child(2) {
+	border-left: 1px #999999 solid;
+}
+
+.rating:nth-child(3) {
+	border-left: 1px #999999 solid;
+}
+
+hr {
+	color: #f2f2f2;
+	width: 85%;
 }

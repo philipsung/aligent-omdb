@@ -1,8 +1,8 @@
 import React, {useState} from "react";
-import SearchResults from './searchResults.js'
+import SearchContent from './SearchContent.js'
 import 'rc-slider/assets/index.css';
 
-export default function SearchHeader() {
+export default function HeaderForm() {
 
 	//Form states
 	const [queryText, setQueryText] = useState('')
@@ -108,7 +108,7 @@ export default function SearchHeader() {
 				<input type="submit" id="form--submit"/>
 			</form>
 
-			<SearchResults pageLimit={pageLimit} nextPage={nextPage} resultCount={resultCount} movies={movies} getNextPage={getNextPage}/>
+			<SearchContent pageLimit={pageLimit} nextPage={nextPage} resultCount={resultCount} movies={movies} getNextPage={getNextPage}/>
 		</>
 	)
 }

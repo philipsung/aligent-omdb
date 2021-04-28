@@ -1,10 +1,9 @@
 import React, {useState, useEffect} from "react";
-
+import MovieRatings from "./MovieRatings.js"
 export default function Details(props) {
 
 
 	const [movieDetails, setMovieDetails] = useState({})
-
 	useEffect(() => {
 		async function fetchData ()  {
 			if (props.imdbID !== '') {
@@ -25,18 +24,40 @@ export default function Details(props) {
 	if (props.imdbID !== "") {
 		return (
 			<div>
-				<h1>{movieDetails.Title}</h1>
-				<img src={movieDetails.Poster} 
-					alt={movieDetails.Title + " Poster"}
-				/>
-				<p>{movieDetails.Plot}</p>
+				<div id="focused-movie-top">
+					<div id="focused-movie--poster">
+						<img src={movieDetails.Poster} 
+							alt={movieDetails.Title + " Poster"}
+						/>
+					</div>
+
+					<div id="focused-movie--details">
+						<div id="position">
+							<h1>{movieDetails.Title}</h1>
+							<p>1980 AIction adeventure</p>
+							<p>actors mork ham</p>
+						</div>
+					</div>
+				</div>
+
+				<hr/>
+
+				<div>
+					<p>{movieDetails.Plot}</p>
+				</div>
+
+				<hr/>
+				
+				<div>
+					<MovieRatings movieDetails={movieDetails}/>
+				</div>
 			</div>
 		)
 	}
 	else {
 		return (
 			<div>
-				Please enter a name and select other parameters if required then press enter.
+				Search guide: 
 			</div>
 		)
 	}

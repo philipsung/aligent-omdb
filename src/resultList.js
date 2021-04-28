@@ -1,6 +1,6 @@
 import React, {useRef, useCallback} from "react";
-
-export default function SearchResults(props) {
+import MovieCard from "./MovieCard.js"
+export default function ResultList(props) {
 
 	//OBSERVER
 	const observer = useRef()
@@ -17,24 +17,12 @@ export default function SearchResults(props) {
 	if (props.movies && props.movies.length > 0) {
 		return (
 			<div id="search-results-list">
-				<p id="search-results--counter">{props.movies.length} / {props.resultCount} RESULTS</p>
+				<div id="search-results--counter">
+					<p>{props.movies.length} / {props.resultCount} RESULTS</p>
+				</div>
 
-				{props.movies.map((movie, index) => (
-					<div className="movieCard" 
-						key={movie.imdbID}
-						onClick={ () => {props.changeFocus(movie.imdbID)
-					}} >
-						<div className="movieCard--poster">
-							<img
-								src={movie.Poster}
-								alt={movie.Title + " poster"}
-							/>
-						</div>
-						<div className="movieCard--title">
-							<h3>{movie.Title}</h3>
-							<p>{movie.Year}</p>
-						</div>
-					</div>
+				{props.movies.map(movie => (
+					<MovieCard movie={movie} focus={props.focus} changeFocus={props.changeFocus}/>
 					))
 				}
 				<div id="search-results--bottom" ref={bottomOfResults}>

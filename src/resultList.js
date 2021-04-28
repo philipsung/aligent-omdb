@@ -2,7 +2,7 @@ import React, {useRef, useCallback} from "react";
 import MovieCard from "./MovieCard.js"
 export default function ResultList(props) {
 
-	//OBSERVER
+	//Init observer
 	const observer = useRef()
 	const bottomOfResults = useCallback(node => {
 		if (observer.current) observer.current.disconnect()
@@ -11,6 +11,7 @@ export default function ResultList(props) {
 				props.getNextPage()
 			}
 		})
+		//if node exists then set observer
 		if (node) observer.current.observe(node)
 	}, [props.pageLimit, props.nextPage])
 
@@ -18,7 +19,7 @@ export default function ResultList(props) {
 		return (
 			<div id="search-results-list">
 				<div id="search-results--counter">
-					<p>{props.movies.length} / {props.resultCount} RESULTS</p>
+					<p>{props.movies.length} {props.resultCount ? <span> / {props.resultCount}</span> : null}  RESULTS</p>
 				</div>
 
 				{props.movies.map(movie => (

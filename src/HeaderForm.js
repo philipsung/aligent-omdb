@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import SearchContent from './SearchContent.js'
 import 'rc-slider/assets/index.css';
 
@@ -8,6 +8,8 @@ export default function HeaderForm() {
 	const [queryText, setQueryText] = useState('')
 	const [queryType, setQueryType] = useState('')
 	const [queryYear, setqueryYear] = useState('')
+	const [querySeason, setSeason] = useState('')
+	const [queryEpisode, setEpisode] = useState('')
 	const currentYear = new Date().getFullYear()
 
 	//Result states
@@ -35,11 +37,16 @@ export default function HeaderForm() {
 		setPageLimit(1)
 
 		let data = {}
-
+		let url
 		try {
-			const url = `http://www.omdbapi.com/?apikey=19bc8d19&s=${queryText}&y=${queryYear}&type=${queryType}&page=1`
+			//Submit different query format
+			if (queryType === "episode") {
+				url = `http://www.omdbapi.com/?apikey=19bc8d19&t=${queryText}&season=${querySeason}`
+			} else url = `http://www.omdbapi.com/?apikey=19bc8d19&s=${queryText}&y=${queryYear}&type=${queryType}&page=1`
+
 			let res = await fetch(url)
 			data = await res.json()
+			console.log(data)
 		} catch (err) {
 			console.error(err)
 		}
@@ -53,7 +60,8 @@ export default function HeaderForm() {
 		else {
 			setResultCount(data.totalResults)
 			setPageLimit( Math.ceil(data.totalResults / 10))
-			setMovies(removeDuplicates(data.Search))
+			console.log(Math.ceil(data.totalResults / 10))
+			setMovies(removeDuplicates( queryType==="episode" ? data.Episodes : data.Search))
 			setNextPage(2)
 		}
 	}
@@ -76,12 +84,24 @@ export default function HeaderForm() {
 		setNextPage(nextPage + 1)
 	}
 
+	let isEpisode = (queryType === "episode") ? true : false
+
+	// useEffect( () => {
+	// 	let element = document.getElementById("season-input")
+	// 	if (queryType === "episode") {
+	// 		element.classList.remove("hidden")
+	// 	} else if (element !== null && queryType !== "episode") {
+	// 		element.classList.add("hidden")
+	// 		console.log("Hiding season")
+	// 	}
+	// 	}, [queryType])
+
 	return (
 		<>
 			<form className="form" onSubmit={queryAPI}>
 				<div id="form-text">
-					<label className="label" htmlFor="year">Search for:</label>
-					<input className="input" type="text" 
+					<label className="search-label" htmlFor="year"><i className="fas fa-search"></i></label>
+					<input className="text-input" type="text" 
 						name="year"
 						placeholder="E.g. Parasite"
 						onChange={ (e) => setQueryText(e.target.value)}
@@ -90,20 +110,35 @@ export default function HeaderForm() {
 
 				<div id="form-parameters">
 					<div id="form-parameters-left">
-						<label className="label" htmlFor="queryYear">YEAR</label>
-						<input type="number" name="queryYear"
-							min="1880" max={currentYear} maxLength="4"  
-							value={queryYear}
-							onChange={ (e) => setqueryYear(e.target.value)} />
+						{queryType !== "episode" 
+						? <>	<label className="label-filter" htmlFor="queryYear">YEAR</label>
+							<input className="year-input" type="number" name="queryYear"
+								min="1880" max={currentYear} maxLength="4"  
+								value={queryYear}
+								onChange={ (e) => setqueryYear(e.target.value)} />
+								</>
+						: null
+					}
+
 					</div>
 					
 					<div id="form-parameters-right" onChange={ (e) => setQueryType(e.target.value)}>
-						<label className="label" htmlFor="queryType">TYPE</label>
+						<label className="label-filter" htmlFor="queryType">TYPE</label>
 						<input type="radio" value="" name="queryType" defaultChecked />Any
 						<input type="radio" value="movie" name="queryType" />Movies
 						<input type="radio" value="series" name="queryType" />Series
 						<input type="radio" value="episode" name="queryType" />Episodes
+						
 					</div>
+					
+					{queryType === "episode" 
+					?	<div id="season-input">
+							<label className="label-filter" htmlFor="querySeason">SEASON</label>
+							<input class="form-season" type="number" name="querySeason" 
+								min="1" maxLength="3" value={querySeason}
+								onChange={ (e) => setSeason(e.target.value)} />
+						</div> 
+					: null}
 				</div>
 				<input type="submit" id="form--submit"/>
 			</form>

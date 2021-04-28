@@ -21,9 +21,10 @@ export default function Details(props) {
 	}
 	, [props.imdbID]);
 
+	//Check a focus has been selected
 	if (props.imdbID !== "") {
 		return (
-			<div>
+			<div id="focused-movie">
 				<div id="focused-movie-top">
 					<div id="focused-movie--poster">
 						<img src={movieDetails.Poster} 
@@ -34,23 +35,23 @@ export default function Details(props) {
 					<div id="focused-movie--details">
 						<div id="position">
 							<h1>{movieDetails.Title}</h1>
-							<p>1980 AIction adeventure</p>
-							<p>actors mork ham</p>
+							<p><span id="focused-movie--rated">{movieDetails.Rated}</span>
+							<span>{movieDetails.Year} · {movieDetails.Genre} · {movieDetails.Runtime}</span></p>
+							<p><strong>Stars:</strong> {movieDetails.Actors}</p>
+							<p><strong>Director:</strong> {movieDetails.Director}</p>
+							<p><strong>Production:</strong> {movieDetails.Production}</p>
+							<p><strong>Gross USA:</strong> {movieDetails.BoxOffice}</p>
+							<p>{movieDetails.Awards}</p>
 						</div>
 					</div>
 				</div>
-
 				<hr/>
-
-				<div>
+				<div id="focused-movie--plot">
 					<p>{movieDetails.Plot}</p>
 				</div>
-
 				<hr/>
-				
-				<div>
-					<MovieRatings movieDetails={movieDetails}/>
-				</div>
+				<MovieRatings movieDetails={movieDetails}/>
+				<button id="watchlist" onClick={() => (console.log("Adding.." + movieDetails.Title))}><i class="far fa-bookmark"></i> Watchlist</button>
 			</div>
 		)
 	}

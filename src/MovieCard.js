@@ -10,10 +10,13 @@ export default function MovieCard(props){
 			onClick={ () => props.changeFocus(props.movie.imdbID)
 		} >
 			<div className="movieCard--poster">
-				<img
-					src={props.movie.Poster}
-					alt={props.movie.Title + " poster"}
-				/>
+				{props.movie.Poster 
+					? <img
+						src={props.movie.Poster}
+						alt={props.movie.Title + " poster"}
+					/> 
+					: null}
+				
 			</div>
 			<div className="movieCard--details">
 				<h3 className="movieCard--title">{props.movie.Title}</h3>

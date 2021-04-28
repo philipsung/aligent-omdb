@@ -2,6 +2,7 @@ html {
 	background: #282c38;
 	padding: 0;
 	margin: 0;
+	box-sizing: border-box;
 }
 body {
   	margin: 0;
@@ -19,13 +20,16 @@ code {
 	display: flex;
 	width: 100%;
 	font-size: 10px;
-	padding: 29px 0;
 	background: #666666;
 	color: white;
+	height: 93px;
+	align-items: center;
 }
 
 #form-text {
 	width: 45%;
+	text-align: left;
+	color: #e6e6e6;
 }
 
 #form-parameters {
@@ -33,9 +37,29 @@ code {
 	display: flex;
 }
 
-label {
+#form-parameters-left {
+	width: 20%;
+	margin-right: 20px;
+	text-align: left;
+}
+
+.label-filter {
 	display: block;
 	text-align: left;
+}
+
+.search-label {
+	font-size: 24px;
+	margin-left: 30px;
+	margin-right: 20px;
+}
+
+.text-input {
+	height: 100%;
+	font-size: 24px;
+	background: inherit;
+	border: none;
+	color: #e6e6e6;
 }
 
 #search-results {
@@ -56,12 +80,7 @@ label {
 
 #search-results-details {
 	width: 61%;
-}
-
-#form-parameters-left {
-	width: 40%;
-	margin-right: 20px;
-	text-align: left;
+	padding: 0 10px;
 }
 
 .movieCard {
@@ -75,7 +94,6 @@ label {
 }
 
 .movieCard--poster {
-	border: 1px #404040 solid;
 	border-radius: 5px;
 	height: 60px;
 	width: 60px;
@@ -160,6 +178,10 @@ input:invalid {
 	text-align: left;
 }
 
+#focused-movie--details p {
+	margin: 10px 0;
+}
+
 #position {
 	position: absolute;
 	bottom: 0;
@@ -175,7 +197,7 @@ input:invalid {
 .rating {
 	width: 25%;
 	padding: 10px 20px;
-	font-size: .8em;
+	font-size: .9em;
 	color: #999999;
 }
 
@@ -189,5 +211,68 @@ input:invalid {
 
 hr {
 	color: #f2f2f2;
-	width: 85%;
+	width: 90%;
+}
+
+#focused-movie--rated {
+	border: 1px black solid;
+	border-radius: 5px;
+	font-size: .9em;
+	padding: .1em .6em;
+	margin-right: 10px;
+	color: black;
+}
+
+#focused-movie--plot {
+	width: 95%;
+	text-align: left;
+	margin: 0 auto;
+}
+
+.year-input {
+	background: #b3b3b3;
+	border-radius: 5px;
+	width: 40px;
+	color: black;
+	/*font-size: 16px;*/
+}
+
+
+/*Hide up/down arrows for number input*/
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+#watchlist {
+	position: absolute;
+	top: 5%;
+	right: 5%;
+	padding: 10px 20px;
+	border-radius: 5px;
+	border: 1px solid black;
+	background: white;
+	font-size: 14px;
+}
+
+#focused-movie {
+	position: relative;
+}
+
+#season-input {
+	margin-left: 20px;
+}
+
+.form-season {
+	width: 20px;
+	background: #b3b3b3;
+	/*color: #e6e6e6;*/
+	color: black;
+	border-radius: 5px;
+	height: 1em;
 }

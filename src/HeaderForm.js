@@ -21,6 +21,8 @@ export default function HeaderForm() {
 	//Remove any duplicates based on imdbID being unique
 	//Function from https://dev.to/marinamosti/removing-duplicates-in-an-array-of-objects-in-js-with-sets-3fep
 	function removeDuplicates (movies) {
+		if (!movies) return
+			
 		const uniqueMovies = Array.from(new Set(movies.map(a => a.imdbID)))
 		 .map(imdbID => {
 		   return movies.find(a => a.imdbID === imdbID)

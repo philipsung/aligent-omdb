@@ -16,7 +16,7 @@ export default function HeaderForm() {
 	const [nextPage, setNextPage] = useState(1)
 	const [pageLimit, setPageLimit] = useState(1)
 	const [resultCount, setResultCount] = useState(-1)
-	const [state, setState] = useState('idle')
+	const [searchState, setState] = useState('')
 
 	//Remove any duplicates based on imdbID being unique
 	//Function from https://dev.to/marinamosti/removing-duplicates-in-an-array-of-objects-in-js-with-sets-3fep
@@ -35,6 +35,7 @@ export default function HeaderForm() {
 		e.preventDefault();	
 
 		//init variables
+		setState('')
 		setMovies([])
 		setPageLimit(1)
 
@@ -131,6 +132,12 @@ export default function HeaderForm() {
 				<input type="submit" id="form--submit"/>
 			</form>
 			<SearchContent pageLimit={pageLimit} nextPage={nextPage} resultCount={resultCount} movies={movies} getNextPage={getNextPage}/>
+			{ searchState === "failed" 
+			? 	<div id="search-state">
+					<p>Search failed</p>
+				</div>
+			: null
+			}
 		</>
 	)
 }

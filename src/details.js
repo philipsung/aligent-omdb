@@ -14,7 +14,7 @@ export default function Details(props) {
 					let data = await res.json()
 					setMovieDetails({...data})
 				} catch (err) {
-					console.err(err)
+					console.error(err)
 				}
 			}
 		}

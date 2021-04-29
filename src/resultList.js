@@ -7,6 +7,7 @@ export default function ResultList(props) {
 	const bottomOfResults = useCallback(node => {
 		if (observer.current) observer.current.disconnect()
 		observer.current = new IntersectionObserver(entries => {
+			//Fetch next page if available and div appears on screen (bottom of page is reached)
 			if (entries[0].isIntersecting && props.nextPage < props.pageLimit) {
 				props.getNextPage()
 			}
@@ -15,6 +16,7 @@ export default function ResultList(props) {
 		if (node) observer.current.observe(node)
 	}, [props.pageLimit, props.nextPage])
 
+	//only render if movies exist in props
 	if (props.movies && props.movies.length > 0) {
 		return (
 			<div id="search-results-list">

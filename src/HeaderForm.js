@@ -9,7 +9,6 @@ export default function HeaderForm() {
 	const [queryType, setQueryType] = useState('')
 	const [queryYear, setqueryYear] = useState('')
 	const [querySeason, setSeason] = useState('')
-	const [queryEpisode, setEpisode] = useState('')
 	const currentYear = new Date().getFullYear()
 
 	//Result states
@@ -17,7 +16,10 @@ export default function HeaderForm() {
 	const [nextPage, setNextPage] = useState(1)
 	const [pageLimit, setPageLimit] = useState(1)
 	const [resultCount, setResultCount] = useState(-1)
+	const [state, setState] = useState('idle')
 
+	//Remove any duplicates based on imdbID being unique
+	//Function from https://dev.to/marinamosti/removing-duplicates-in-an-array-of-objects-in-js-with-sets-3fep
 	function removeDuplicates (movies) {
 		const uniqueMovies = Array.from(new Set(movies.map(a => a.imdbID)))
 		 .map(imdbID => {
@@ -46,7 +48,6 @@ export default function HeaderForm() {
 
 			let res = await fetch(url)
 			data = await res.json()
-			console.log(data)
 		} catch (err) {
 			console.error(err)
 		}
@@ -54,13 +55,13 @@ export default function HeaderForm() {
 		//Check search has results
 		if (data.Response==="False") {
 			//TODO: Set flag for bad query
+			setState("failed")
 			return
 		}
 		//Process results and set pageLimit
 		else {
 			setResultCount(data.totalResults)
 			setPageLimit( Math.ceil(data.totalResults / 10))
-			console.log(Math.ceil(data.totalResults / 10))
 			setMovies(removeDuplicates( queryType==="episode" ? data.Episodes : data.Search))
 			setNextPage(2)
 		}
@@ -83,18 +84,6 @@ export default function HeaderForm() {
 		}
 		setNextPage(nextPage + 1)
 	}
-
-	let isEpisode = (queryType === "episode") ? true : false
-
-	// useEffect( () => {
-	// 	let element = document.getElementById("season-input")
-	// 	if (queryType === "episode") {
-	// 		element.classList.remove("hidden")
-	// 	} else if (element !== null && queryType !== "episode") {
-	// 		element.classList.add("hidden")
-	// 		console.log("Hiding season")
-	// 	}
-	// 	}, [queryType])
 
 	return (
 		<>
@@ -128,13 +117,12 @@ export default function HeaderForm() {
 						<input type="radio" value="movie" name="queryType" />Movies
 						<input type="radio" value="series" name="queryType" />Series
 						<input type="radio" value="episode" name="queryType" />Episodes
-						
 					</div>
 					
 					{queryType === "episode" 
 					?	<div id="season-input">
 							<label className="label-filter" htmlFor="querySeason">SEASON</label>
-							<input class="form-season" type="number" name="querySeason" 
+							<input className="form-season" type="number" name="querySeason" 
 								min="1" maxLength="3" value={querySeason}
 								onChange={ (e) => setSeason(e.target.value)} />
 						</div> 
@@ -142,7 +130,6 @@ export default function HeaderForm() {
 				</div>
 				<input type="submit" id="form--submit"/>
 			</form>
-
 			<SearchContent pageLimit={pageLimit} nextPage={nextPage} resultCount={resultCount} movies={movies} getNextPage={getNextPage}/>
 		</>
 	)

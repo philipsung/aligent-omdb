@@ -249,15 +249,20 @@ input[type=number] {
   -moz-appearance: textfield;
 }
 
-#watchlist {
+#watchlist-buttons {
 	position: absolute;
 	top: 5%;
 	right: 5%;
-	padding: 10px 20px;
+}
+
+.watchlist-button {
+	width: 90px;
+	height: 30px;
 	border-radius: 5px;
 	border: 1px solid black;
 	background: white;
 	font-size: 14px;
+	margin: 2px;
 }
 
 #focused-movie {

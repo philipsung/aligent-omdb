@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from "react";
 import MovieRatings from "./MovieRatings.js"
+import Watchlist from "./Watchlist.js"
 export default function Details(props) {
 
 
@@ -51,7 +52,7 @@ export default function Details(props) {
 				</div>
 				<hr/>
 				<MovieRatings movieDetails={movieDetails}/>
-				<button id="watchlist" onClick={() => (console.log("Adding.." + movieDetails.Title))}><i class="far fa-bookmark"></i> Watchlist</button>
+				<Watchlist movieDetails={movieDetails}/>
 			</div>
 		)
 	}

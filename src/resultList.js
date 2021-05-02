@@ -1,4 +1,5 @@
 import React, {useRef, useCallback} from "react";
+import HandleAPI from "./HandleAPI.js";
 import MovieCard from "./MovieCard.js"
 export default function ResultList(props) {
 
@@ -9,7 +10,8 @@ export default function ResultList(props) {
 		observer.current = new IntersectionObserver(entries => {
 			//Fetch next page if available and div appears on screen (bottom of page is reached)
 			if (entries[0].isIntersecting && props.nextPage < props.pageLimit) {
-				props.getNextPage()
+				if (HandleAPI.getLoadStatus() === false)
+					props.getNextPage()
 			}
 		})
 		//if node exists then set observer

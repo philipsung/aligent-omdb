@@ -9,10 +9,12 @@ export default function Watchlist (props) {
 	//Convert JSON string to array of objects
 	function stringToJSONArray (data) {
 		let obj = JSON.parse(data)
+		console.log(obj)
 		let res = []
 		for (let i in obj) {
 			res.push(obj[i])
 		}
+		console.log(res)
 		return res;
 	}
 
@@ -50,12 +52,16 @@ export default function Watchlist (props) {
 	if local storage is empty then set watchlist to [] & set state to loaded
 	if local storage is not empty then load from localstorage & set state to loaded */
 	useEffect(() => {
+		console.log("Checking watchlist status")
 		if (!watchlistLoaded) {
-			let storedlist = localStorage.getItem("watchlist")
+			console.log("Watchlist not loaded")
 			setLoaded(true)
+			let storedlist = localStorage.getItem("watchlist")
 			if (storedlist !== null && storedlist !== "undefined") {
+				console.log("Loaded existing list")
 				setWatchlist(stringToJSONArray(localStorage.getItem("watchlist")))
 			} else {
+				console.log("Set new list")
 				setWatchlist([])
 			}
 		}

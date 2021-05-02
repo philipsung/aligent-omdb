@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from "react";
 import SearchContent from './SearchContent.js'
 import 'rc-slider/assets/index.css';
-
+import HandleAPI from './HandleAPI.js';
 export default function HeaderForm() {
 
 	//Form states
@@ -18,79 +18,50 @@ export default function HeaderForm() {
 	const [resultCount, setResultCount] = useState(-1)
 	const [searchState, setState] = useState('')
 
-	//Remove any duplicates based on imdbID being unique
-	//Function from https://dev.to/marinamosti/removing-duplicates-in-an-array-of-objects-in-js-with-sets-3fep
-	function removeDuplicates (movies) {
-		if (!movies) return
-			
-		const uniqueMovies = Array.from(new Set(movies.map(a => a.imdbID)))
-		 .map(imdbID => {
-		   return movies.find(a => a.imdbID === imdbID)
-		 })
-		 return uniqueMovies
-	}
-
 	//Check the query and store first page of results if valid
 	//If not valid, update state for result details
-	const queryAPI = async(e) => {
+	const initialQuery = async(e) => {
 		//prevent page reload on form submission
 		e.preventDefault();	
-
 		//init variables
 		setState('')
 		setMovies([])
 		setPageLimit(1)
 
-		let data = {}
-		let url
-		try {
-			//Submit different query format
-			if (queryType === "episode") {
-				url = `http://www.omdbapi.com/?apikey=19bc8d19&t=${queryText}&season=${querySeason}`
-			} else url = `http://www.omdbapi.com/?apikey=19bc8d19&s=${queryText}&y=${queryYear}&type=${queryType}&page=1`
+        let url = "https://www.omdbapi.com/?apikey=19bc8d19&"
+        url = (queryType === "episode") ? url + `t=${queryText}&season=${querySeason}` 
+            : url + `s=${queryText}&y=${queryYear}&type=${queryType}&page=1`
 
-			let res = await fetch(url)
-			data = await res.json()
-		} catch (err) {
-			console.error(err)
-		}
-
+        let data = await HandleAPI.queryAPI(url)
 		//Check search has results
-		if (data.Response==="False") {
-			//TODO: Set flag for bad query
+		if (data === null || data.Response==="False") {
 			setState("failed")
 			return
 		}
-		//Process results and set pageLimit
+		//If successful then remove duplicates based on imdbID and set states
 		else {
 			setResultCount(data.totalResults)
 			setPageLimit( Math.ceil(data.totalResults / 10))
-			setMovies(removeDuplicates( queryType==="episode" ? data.Episodes : data.Search))
+			setMovies(HandleAPI.removeDuplicates( queryType==="episode" ? data.Episodes : data.Search))
 			setNextPage(2)
 		}
 	}
 
 	//Retrieve next page of results if it exists
 	const getNextPage = async(e) => {
-		let data = {}
-		if (nextPage > pageLimit) {
+		if (nextPage > pageLimit || HandleAPI.getLoadStatus() == true) {
 			return
 		}
 
-		try {
-			const url = `http://www.omdbapi.com/?apikey=19bc8d19&s=${queryText}&y=${queryYear}&type=${queryType}&page=${nextPage}`
-			let res = await fetch(url)
-			data = await res.json()
-			setMovies(removeDuplicates(movies.concat(data.Search)))
-		} catch (err) {
-			console.error(err)
-		}
+        let url = `https://www.omdbapi.com/?apikey=19bc8d19&s=${queryText}&y=${queryYear}&type=${queryType}&page=${nextPage}`
+        let data = await HandleAPI.queryAPI(url)
+        if (data.Search.length > 0) setMovies(HandleAPI.removeDuplicates(movies.concat(data.Search)))
 		setNextPage(nextPage + 1)
 	}
 
 	return (
 		<>
-			<form className="form" onSubmit={queryAPI}>
+			<form className="form" onSubmit={initialQuery}>
 				<div id="form-text">
 					<label className="search-label" htmlFor="year"><i className="fas fa-search"></i></label>
 					<input className="text-input" type="text" 

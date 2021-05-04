@@ -1,20 +1,22 @@
 import {React, useState, useEffect} from "react"
 
 export default function Watchlist (props) {
+
+	// INCOMING PROPS
+	// movieDetails: movie object
+
 	const [watchlist, setWatchlist] = useState()
 	const [isInList, setInList] = useState()
 	const [watchlistLoaded, setLoaded] = useState(false)
-
+	const [modalVisible, setModal] = useState(false)
 
 	//Convert JSON string to array of objects
 	function stringToJSONArray (data) {
 		let obj = JSON.parse(data)
-		console.log(obj)
 		let res = []
 		for (let i in obj) {
 			res.push(obj[i])
 		}
-		console.log(res)
 		return res;
 	}
 
@@ -43,34 +45,42 @@ export default function Watchlist (props) {
 	function removeFromWatchlist (e) {
 		setWatchlist(watchlist.filter( movie => movie.imdbID !== props.movieDetails.imdbID ))
 	}
-
-	function showWatchlist () {
-		console.log(watchlist)
+	
+	//Enable modal to display watchlist
+	function toggleWatchlist () {
+		setModal(!modalVisible)
 	}
 
-	/* If watchlist has not been loaded yet, check localstorage first
-	if local storage is empty then set watchlist to [] & set state to loaded
-	if local storage is not empty then load from localstorage & set state to loaded */
+	//Load watchlist from local storage or set to empty array
+	function loadWatchlist () {
+		//Check local storage first
+		let storedList = localStorage.getItem("watchlist")
+		if (storedList !== null) {
+			//If local copy exists parse and store in state
+			let converted = JSON.parse(storedList)
+			setWatchlist(converted)
+		} else 
+			setWatchlist([])
+	}
+	
+	// Load watchlist if load state is still false
 	useEffect(() => {
-		console.log("Checking watchlist status")
 		if (!watchlistLoaded) {
-			console.log("Watchlist not loaded")
-			setLoaded(true)
-			let storedlist = localStorage.getItem("watchlist")
-			if (storedlist !== null && storedlist !== "undefined") {
-				console.log("Loaded existing list")
-				setWatchlist(stringToJSONArray(localStorage.getItem("watchlist")))
-			} else {
-				console.log("Set new list")
-				setWatchlist([])
-			}
+			loadWatchlist()
 		}
-	}, [watchlist, props.movieDetails])
+	}, [props.movieDetails])
+
+	//Set load state to true once watchlist has been loaded
+	useEffect(() => {
+		if (!watchlistLoaded)
+			setLoaded(true)
+	}, [watchlist])
 
 	//When watchlist or focused movie is changed, convert from JSON to string and set in local storage
 	useEffect(() => {
-		if (watchlist) checkInList()
-
+		if (!watchlistLoaded) return
+		
+		checkInList()
 		try {
 			localStorage.setItem('watchlist', JSON.stringify(watchlist))
 		} catch (err) {
@@ -79,11 +89,26 @@ export default function Watchlist (props) {
 		},[watchlist,props.movieDetails])
 
 	return (
-		<div id="watchlist-buttons">
-			<button className="watchlist-button" onClick={showWatchlist}><i className="far fa-bookmark"></i> View</button>
-			{isInList 
-				? <button className="watchlist-button" onClick={removeFromWatchlist}><i className="far fa-bookmark"></i> Remove</button>
-				: <button className="watchlist-button" onClick={addToWatchlist}><i className="fas fa-plus"></i> Add</button> 
+		<div>
+			<div id="watchlist-buttons">
+				<button className="watchlist-button" onClick={toggleWatchlist}><i className="far fa-bookmark"></i> View</button>
+				{isInList 
+					? <button className="watchlist-button" onClick={removeFromWatchlist}><i className="fas fa-trash-alt"></i> Remove</button>
+					: <button className="watchlist-button" onClick={addToWatchlist}><i className="fas fa-plus"></i> Add</button> 
+				}
+			</div>
+			{modalVisible ? 
+				<div id="watchlist-modal">
+					<h3>WATCH LIST</h3>
+					<ul>
+						{watchlist.map( movie => (
+							<li><strong>{movie.Title}</strong> · {movie.Rated} · {movie.Year} · {movie.Genre} · {movie.Runtime} </li>
+						)
+						)}
+					</ul>
+					<button className="watchlist-button" onClick={toggleWatchlist}>Close</button>
+				</div>
+				: null
 			}
 		</div>
 	)

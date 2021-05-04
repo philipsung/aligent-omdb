@@ -2,6 +2,11 @@ import React from "react"
 
 export default function MovieCard(props){
 
+	//INCOMING PROPS
+	// 	movies: Array<movie>
+	// focus: String
+	// changeFocus()
+
 	let classList = (props.focus === props.movie.imdbID) ? "movieCard activeCard" : "movieCard"
 
 	return (
